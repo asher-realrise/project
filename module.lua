@@ -116,13 +116,29 @@ function module:noclip(v)
         end
     end)
 end
-function module:getdis(x,y)
-    y = y or game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-    return (x.Position - y.Position).Magnitude
+function module:getpos(v)
+    if typeof(v) == "Vector3" then
+        return v
+    elseif typeof(v) == "CFrame" then
+        return v.Position
+    elseif typeof(v) == "Instance" and v:IsA("BasePart") then
+        return v.Position
+    end
 end
+
+function module:getdis(x, y)
+    local p1 = self:getpos(x)
+    local p2 = self:getpos(y) or game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+    if not p1 or not p2 then
+        return math.huge
+    end
+    return (p1 - p2).Magnitude
+end
+
 game:GetService("Players").LocalPlayer.Idled:connect(function()
 	(game:GetService("VirtualUser")):Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame);
 	wait(1);
 	(game:GetService("VirtualUser")):Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame);
 end)
+
 return module
